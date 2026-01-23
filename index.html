@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Quantum Leap — Identity-Based Productivity</title>
+    <link rel="stylesheet" href="styles.css?v=14">
+</head>
+<body>
+    <!-- Main App Container -->
+    <div id="app" class="app-container">
+        <!-- Screen Container -->
+        <div id="screen-container" class="screen-container">
+            <!-- Screens will be dynamically loaded here -->
+        </div>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <button class="nav-item active" data-screen="home">
+                <span class="nav-icon">🏠</span>
+                <span class="nav-label">Home</span>
+            </button>
+            <button class="nav-item" data-screen="today">
+                <span class="nav-icon">☀️</span>
+                <span class="nav-label">Today</span>
+            </button>
+            <button class="nav-item" data-screen="plan">
+                <span class="nav-icon">🗺️</span>
+                <span class="nav-label">Plan</span>
+            </button>
+            <button class="nav-item" data-screen="visibility">
+                <span class="nav-icon">📣</span>
+                <span class="nav-label">Visibility</span>
+            </button>
+            <button class="nav-item" data-screen="recovery">
+                <span class="nav-icon">🌿</span>
+                <span class="nav-label">Recovery</span>
+            </button>
+        </nav>
+    </div>
+
+    <!-- Templates for each screen -->
+    <template id="home-screen">
+        <div class="screen home-screen">
+            <header class="screen-header">
+                <h1>WHO I'M BECOMING</h1>
+            </header>
+
+            <div class="screen-content">
+                <!-- Identity Hero Card -->
+                <div class="identity-card" data-quarter="q2">
+                    <div class="identity-badge">Q2 2026</div>
+                    <h2 class="identity-archetype">THE STRATEGIST</h2>
+                    <p class="identity-statement">
+                        I am the architect of scalable authority. I build systems that compound visibility without depleting energy.
+                    </p>
+                </div>
+
+                <!-- Sprint Progress -->
+                <div class="card sprint-card">
+                    <h3 class="card-title">CURRENT 12-WEEK SPRINT</h3>
+                    <p class="sprint-name">Scale Authority Platform</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 67%"></div>
+                    </div>
+                    <p class="progress-text">Week 8 of 12 — 67% Complete</p>
+                </div>
+
+                <!-- Weekly Score -->
+                <div class="card score-card">
+                    <h3 class="card-title">THIS WEEK'S SCORE</h3>
+                    <div class="score-display">
+                        <span class="score-number">-</span>
+                        <span class="score-total">/ 10</span>
+                    </div>
+                    <p class="score-detail">Score your week in Plan → Weeks</p>
+                </div>
+
+                <!-- Principle Reminder -->
+                <div class="card principle-card" style="margin-top: 24px;">
+                    <p class="principle-text">"Identity drives behavior. Behavior compounds into results."</p>
+                </div>
+                
+                <!-- Quick Action -->
+                <button class="btn btn-primary" onclick="navigateTo('plan')">
+                    View Quarter Details
+                </button>
+            </div>
+        </div>
+    </template>
+
+    <template id="today-screen">
+        <div class="screen today-screen">
+            <header class="screen-header">
+                <h1 id="today-date">Today</h1>
+            </header>
+
+            <div class="screen-content">
+                <!-- Daily Anchor -->
+                <div class="card anchor-card">
+                    <h3 class="card-title">TODAY'S ANCHOR</h3>
+                    <p class="anchor-text" style="font-style: italic; color: var(--primary-color); font-size: 18px; line-height: 1.6; font-weight: 500;">"I move with authority and trust my decisions"</p>
+                    <p style="font-size: 13px; color: var(--text-light); margin-top: 12px;">Your identity statement grounds every action today.</p>
+                </div>
+
+                <!-- ONE PRIMARY ACTION -->
+                <div class="card priority-card" style="border: 2px solid var(--primary-color); background: rgba(233, 30, 140, 0.03);">
+                    <h3 class="card-title" style="color: var(--primary-color);">ONE PRIMARY ACTION <button class="edit-btn" onclick="editPriority()">✏️ Edit</button></h3>
+                    <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 12px;">What's the one thing that, if completed today, would make everything else easier or unnecessary?</p>
+                    <div class="priority-item">
+                        <label class="checkbox-container">
+                            <input type="checkbox" id="priority-check">
+                            <span class="checkmark"></span>
+                            <span class="priority-text" id="priority-text" style="font-size: 16px; font-weight: 500;">Click Edit to set your primary action</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Principle Reminder -->
+                <div class="card principle-card">
+                    <p class="principle-text">"One focused action compounds more than scattered effort."</p>
+                </div>
+
+                <!-- Daily Log Calendar -->
+                <div class="card calendar-card">
+                    <h3 class="card-title">📅 THIS MONTH</h3>
+                    <p style="font-size: 12px; color: var(--text-light); margin-bottom: 12px;">Track your consistency. Sparkles ✨ mark completed days.</p>
+                    <div id="daily-calendar"></div>
+                </div>
+
+                <!-- Complete Day Button -->
+                <button class="btn btn-complete" id="complete-day-btn">
+                    ✓ Complete Day
+                </button>
+            </div>
+        </div>
+    </template>
+
+    <template id="plan-screen">
+        <div class="screen plan-screen">
+            <header class="screen-header">
+                <h1>PLAN</h1>
+            </header>
+
+            <!-- Sub Navigation -->
+            <div class="sub-nav">
+                <button class="sub-nav-item active" data-tab="quarters">Quarters</button>
+                <button class="sub-nav-item" data-tab="cycles">Cycles</button>
+                <button class="sub-nav-item" data-tab="weeks">Weeks</button>
+            </div>
+
+            <div class="screen-content">
+                <!-- Quarters Tab -->
+                <div id="quarters-tab" class="tab-content active">
+                    <h2 class="section-title">2024 IDENTITY ROADMAP</h2>
+                    
+                    <div class="quarter-card completed" onclick="showQuarterDetail('q1')">
+                        <div class="quarter-header">
+                            <h3>Q1: THE AUTHORITY</h3>
+                            <span class="status-badge completed">✓</span>
+                        </div>
+                        <p class="quarter-dates">Jan-Mar • Completed</p>
+                    </div>
+
+                    <div class="quarter-card current" onclick="showQuarterDetail('q2')">
+                        <div class="quarter-header">
+                            <h3>Q2: THE STRATEGIST</h3>
+                            <span class="status-badge current">◉</span>
+                        </div>
+                        <p class="quarter-dates">Apr-Jun • Current</p>
+                    </div>
+
+                    <div class="quarter-card" onclick="showQuarterDetail('q3')">
+                        <div class="quarter-header">
+                            <h3>Q3: THE SOVEREIGN</h3>
+                            <span class="status-badge">○</span>
+                        </div>
+                        <p class="quarter-dates">Jul-Sep • Upcoming</p>
+                    </div>
+
+                    <div class="quarter-card" onclick="showQuarterDetail('q4')">
+                        <div class="quarter-header">
+                            <h3>Q4: THE MAJESTY</h3>
+                            <span class="status-badge">○</span>
+                        </div>
+                        <p class="quarter-dates">Oct-Dec • Planned</p>
+                    </div>
+                </div>
+
+                <!-- Cycles Tab -->
+                <div id="cycles-tab" class="tab-content">
+                    <h2 class="section-title">12-WEEK SPRINTS</h2>
+                    
+                    <div class="cycle-card active">
+                        <h3>Scale Authority Platform</h3>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 67%"></div>
+                        </div>
+                        <p class="cycle-meta">Week 8 of 12 • Q2 The Strategist</p>
+                        <span class="status-badge active">ACTIVE</span>
+                    </div>
+
+                    <div class="cycle-card">
+                        <h3>Launch Essay Series</h3>
+                        <p class="cycle-meta">Not Started • Q2</p>
+                        <span class="status-badge">PLANNED</span>
+                    </div>
+
+                    <button class="btn btn-secondary">+ New 12-Week Sprint</button>
+                </div>
+
+                <!-- Weeks Tab -->
+                <div id="weeks-tab" class="tab-content">
+                    <h2 class="section-title">WEEK 8 • May 13-19</h2>
+                    
+                    <div class="card">
+                        <h3 class="card-title">TOP OUTCOMES THIS WEEK</h3>
+                        <ol class="outcome-list">
+                            <li>Publish "The Authority Arc" essay</li>
+                            <li>Record 3 video insights for LinkedIn</li>
+                            <li>Schedule 2 podcast guests for June</li>
+                        </ol>
+                    </div>
+
+                    <div class="card">
+                        <h3 class="card-title">AUTHORITY ACTION</h3>
+                        <p>Launch essay distribution to 5 strategic contacts</p>
+                    </div>
+
+                    <div class="card">
+                        <h3 class="card-title">VISIBILITY OUTPUT</h3>
+                        <p>Type: <strong>Long-form essay</strong></p>
+                    </div>
+
+                    <div class="card score-card">
+                        <h3 class="card-title">WEEK SCORE</h3>
+                        <div class="score-display">
+                            <span class="score-number">8.5</span>
+                            <span class="score-total">/ 10</span>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3 class="card-title">REFLECTION</h3>
+                        <p class="reflection-text">
+                            "Shipped despite fear. Response was immediate and validating. Need to trust rough drafts more."
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template id="visibility-screen">
+        <div class="screen visibility-screen">
+            <header class="screen-header">
+                <h1>VISIBILITY</h1>
+            </header>
+
+            <div class="screen-content">
+                <div class="card principle-card">
+                    <p class="principle-text">"Track courage, not just output."</p>
+                </div>
+
+                <h2 class="section-title">YOUR VISIBILITY ACTIONS</h2>
+
+                <div id="visibility-log-container">
+                    <p style="text-align: center; color: #C794BF; margin: 32px 0;">No visibility actions logged yet. Track your first courageous action!</p>
+                </div>
+
+                <button class="btn btn-secondary" onclick="showVisibilityForm()">+ Log Visibility Action</button>
+            </div>
+        </div>
+    </template>
+
+    <template id="recovery-screen">
+        <div class="screen recovery-screen">
+            <header class="screen-header">
+                <h1>RECOVERY PROTOCOL</h1>
+            </header>
+
+            <div class="screen-content">
+                <!-- Emotional State -->
+                <div class="card state-card">
+                    <h3 class="card-title">EMOTIONAL STATE TRACKING</h3>
+                    <p class="state-label">How grounded do you feel?</p>
+                    <div class="energy-scale">
+                        <button class="energy-btn" data-value="1">1</button>
+                        <button class="energy-btn" data-value="2">2</button>
+                        <button class="energy-btn active" data-value="3">3</button>
+                        <button class="energy-btn" data-value="4">4</button>
+                        <button class="energy-btn" data-value="5">5</button>
+                    </div>
+                </div>
+
+                <!-- Reflection Prompt -->
+                <div class="card prompt-card">
+                    <h3 class="card-title">REFLECTION SPACE</h3>
+                    <p class="prompt-text" style="font-style: italic; color: var(--primary-color); margin-bottom: 12px;">"What permission do I need to give myself today?"</p>
+                    <p style="font-size: 12px; color: var(--text-light); margin-bottom: 12px;">Recovery isn't passive. It's where integration happens.</p>
+                    <textarea 
+                        id="reflection-notes" 
+                        class="reflection-input" 
+                        placeholder="Your thoughts, realizations, or anything you need to process..."
+                        rows="5"
+                    ></textarea>
+                    <button class="btn btn-primary" onclick="saveReflection()" style="margin-top: 12px;">Save Reflection</button>
+                </div>
+
+                <!-- Reflection Log -->
+                <div class="card">
+                    <h3 class="card-title">PAST REFLECTIONS</h3>
+                    <div id="reflection-log-container">
+                        <p style="text-align: center; color: var(--text-light); padding: 16px 0;">No reflections saved yet.</p>
+                    </div>
+                </div>
+
+                <!-- Streak Counter -->
+                <div class="streak-display">
+                    <span class="streak-emoji">✨</span>
+                    <span class="streak-text">RECOVERY STREAK: <strong id="recovery-streak">0 days</strong></span>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <script>
+        // Check if onboarding is complete - redirect to onboarding if not
+        if (!localStorage.getItem('onboardingComplete')) {
+            window.location.href = 'onboarding.html';
+        }
+    </script>
+    <script src="app.js?v=14"></script>
+    <script>
+        // Force cache clear and reload
+        if (!localStorage.getItem('appVersion') || localStorage.getItem('appVersion') !== '10.0') {
+            localStorage.clear();
+            localStorage.setItem('appVersion', '10.0');
+            console.log('✨ App updated to v10.0 - Phase 4!');
+            console.log('🎯 PHASE 4: Today screen simplified - "One Primary Action" principle');
+            console.log('🎯 NEW: Removed energy check-in and micro-action');
+            console.log('🎯 NEW: Enhanced primary action card with border + principle');
+            console.log('🎯 NEW: "One focused action compounds more than scattered effort."');
+            console.log('🎯 PHASES 1-3: Quiz, Visibility tracking, Copy refinement, Reflection log');
+            console.log('⚠️  localStorage cleared - please retake onboarding quiz');
+            // Redirect to onboarding after clearing
+            window.location.href = 'onboarding.html';
+        }
+    </script>
+</body>
+</html>

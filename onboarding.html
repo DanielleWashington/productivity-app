@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Quantum Leap — Discover Your Type</title>
+    <link rel="stylesheet" href="styles.css?v=10">
+    <style>
+        .onboarding-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 24px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .quiz-step {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .quiz-step.active {
+            display: block;
+        }
+        
+        .welcome-card {
+            background: var(--primary-gradient);
+            color: white;
+            border-radius: 16px;
+            padding: 32px;
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        
+        .welcome-card h1 {
+            font-size: 32px;
+            margin-bottom: 16px;
+        }
+        
+        .welcome-card p {
+            font-size: 18px;
+            line-height: 1.6;
+            opacity: 0.95;
+        }
+        
+        .question-card {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
+            border: 2px solid var(--border-color);
+        }
+        
+        .question-number {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--primary-color);
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+        
+        .question-text {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 24px;
+            line-height: 1.4;
+        }
+        
+        .answer-option {
+            background: white;
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 16px;
+            color: var(--text-primary);
+            text-align: left;
+        }
+        
+        .answer-option:hover {
+            border-color: var(--primary-color);
+            background: rgba(233, 30, 140, 0.05);
+        }
+        
+        .answer-option.selected {
+            border-color: var(--primary-color);
+            background: rgba(233, 30, 140, 0.1);
+            font-weight: 600;
+        }
+        
+        .progress-bar-container {
+            margin-bottom: 24px;
+        }
+        
+        .progress-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            text-align: center;
+        }
+        
+        .result-card {
+            background: var(--primary-gradient);
+            color: white;
+            border-radius: 16px;
+            padding: 32px;
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        
+        .result-archetype {
+            font-size: 36px;
+            font-weight: 800;
+            margin-bottom: 16px;
+        }
+        
+        .result-description {
+            font-size: 18px;
+            line-height: 1.6;
+            opacity: 0.95;
+            margin-bottom: 24px;
+        }
+        
+        .customize-section {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 16px;
+            border: 2px solid var(--border-color);
+        }
+        
+        .customize-section h3 {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+        
+        .form-input-large {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            font-size: 16px;
+            font-family: inherit;
+            margin-bottom: 16px;
+            transition: border-color 0.2s ease;
+        }
+        
+        .form-input-large:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+        
+        textarea.form-input-large {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .btn-large {
+            width: 100%;
+            padding: 18px;
+            font-size: 18px;
+            font-weight: 700;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-large.btn-primary {
+            background: var(--primary-gradient);
+            color: white;
+            box-shadow: 0 4px 12px rgba(233, 30, 140, 0.3);
+        }
+        
+        .btn-large.btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(233, 30, 140, 0.4);
+        }
+        
+        .btn-large.btn-secondary {
+            background: white;
+            color: var(--primary-color);
+            border: 2px solid var(--border-color);
+            margin-top: 12px;
+        }
+        
+        .btn-large.btn-secondary:hover {
+            border-color: var(--primary-color);
+            background: rgba(233, 30, 140, 0.05);
+        }
+        
+        .skip-link {
+            text-align: center;
+            margin-top: 16px;
+        }
+        
+        .skip-link a {
+            color: var(--text-light);
+            font-size: 14px;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+        
+        .skip-link a:hover {
+            color: var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="onboarding-container">
+        <!-- Step 1: Welcome -->
+        <div class="quiz-step active" id="step-welcome">
+            <div class="welcome-card">
+                <h1>You don't need better habits.<br>You need a stronger identity.</h1>
+                <p>Quantum Leap helps align who you are becoming with what you do every day — without burnout.</p>
+            </div>
+            <button class="btn-large btn-primary" onclick="startQuiz()">Begin Identity Quiz</button>
+            <div class="skip-link">
+                <a href="index.html">Skip for now →</a>
+            </div>
+        </div>
+
+        <!-- Step 2-13: Quiz Questions -->
+        <div class="quiz-step" id="step-quiz">
+            <div class="progress-bar-container">
+                <p class="progress-label">Question <span id="current-question">1</span> of 12</p>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="quiz-progress" style="width: 8.33%"></div>
+                </div>
+            </div>
+            
+            <div class="question-card">
+                <div class="question-number" id="question-number">QUESTION 1</div>
+                <h2 class="question-text" id="question-text"></h2>
+                <div id="answers-container"></div>
+            </div>
+            
+            <button class="btn-large btn-primary" id="next-btn" onclick="nextQuestion()" disabled>Continue</button>
+        </div>
+
+        <!-- Step 8: Result -->
+        <div class="quiz-step" id="step-result">
+            <div class="result-card">
+                <div class="result-archetype" id="result-archetype"></div>
+                <p class="result-description" id="result-description"></p>
+            </div>
+            <button class="btn-large btn-primary" onclick="useDefaults()">Begin My Quantum Leap</button>
+            <button class="btn-large btn-secondary" onclick="showCustomization()">Customize Quarters First</button>
+        </div>
+
+        <!-- Step 9: Customization -->
+        <div class="quiz-step" id="step-customize">
+            <div class="welcome-card">
+                <h1>🎨 Personalize Your Quarters</h1>
+                <p>Customize your four quarterly archetypes and themes</p>
+            </div>
+
+            <div id="quarters-customization"></div>
+
+            <button class="btn-large btn-primary" onclick="saveCustomization()">Launch My App ✨</button>
+        </div>
+    </div>
+
+    <script>
+        // 12-question quiz with proper categorization
+        const quizData = [
+            {
+                id: "q1",
+                category: "authority",
+                question: "When faced with an important decision, you usually:",
+                answers: [
+                    { text: "Wait for more information", type: "authority", signal: "hesitation" },
+                    { text: "Ask for input before acting", type: "strategist", signal: "unclear_planning" },
+                    { text: "Decide quickly and adjust later", type: "sovereign", signal: "capacity_overload" },
+                    { text: "Trust your instinct immediately", type: "majesty", signal: "integration" }
+                ]
+            },
+            {
+                id: "q2",
+                category: "visibility",
+                question: "Being seen publicly makes you feel:",
+                answers: [
+                    { text: "Exposed and tense", type: "authority", signal: "under_visibility" },
+                    { text: "Curious but cautious", type: "strategist", signal: "fragmentation" },
+                    { text: "Energized", type: "sovereign", signal: "boundary_strain" },
+                    { text: "Like it's inevitable", type: "majesty", signal: "embodiment" }
+                ]
+            },
+            {
+                id: "q3",
+                category: "execution",
+                question: "Your most consistent challenge is:",
+                answers: [
+                    { text: "Overthinking", type: "authority", signal: "self_doubt" },
+                    { text: "Starting but not finishing", type: "strategist", signal: "fragmentation" },
+                    { text: "Doing too much", type: "sovereign", signal: "capacity_overload" },
+                    { text: "Outgrowing current systems", type: "majesty", signal: "refinement" }
+                ]
+            },
+            {
+                id: "q4",
+                category: "recovery",
+                question: "When you push too hard, your body responds with:",
+                answers: [
+                    { text: "Shutdown", type: "authority", signal: "hesitation" },
+                    { text: "Anxiety", type: "strategist", signal: "unclear_planning" },
+                    { text: "Irritability", type: "sovereign", signal: "boundary_strain" },
+                    { text: "Restlessness", type: "majesty", signal: "integration" }
+                ]
+            },
+            {
+                id: "q5",
+                category: "identity_orientation",
+                question: "Which sentence feels truest right now?",
+                answers: [
+                    { text: "I know I'm capable but unseen", type: "authority", signal: "under_visibility" },
+                    { text: "I need clearer strategy", type: "strategist", signal: "fragmentation" },
+                    { text: "I want autonomy and ownership", type: "sovereign", signal: "capacity_overload" },
+                    { text: "I'm ready to be fully expressed", type: "majesty", signal: "embodiment" }
+                ]
+            },
+            {
+                id: "q6",
+                category: "authority",
+                question: "How do you handle sharing your expertise?",
+                answers: [
+                    { text: "I hold back, worried I don't know enough", type: "authority", signal: "self_doubt" },
+                    { text: "I prepare extensively before sharing", type: "strategist", signal: "fragmentation" },
+                    { text: "I share freely when it feels aligned", type: "sovereign", signal: "boundary_strain" },
+                    { text: "I teach what I'm learning as I go", type: "majesty", signal: "integration" }
+                ]
+            },
+            {
+                id: "q7",
+                category: "execution",
+                question: "Your ideal productivity system would:",
+                answers: [
+                    { text: "Give me clear steps and build confidence", type: "authority", signal: "hesitation" },
+                    { text: "Maximize efficiency and minimize effort", type: "strategist", signal: "unclear_planning" },
+                    { text: "Honor my energy and prevent burnout", type: "sovereign", signal: "capacity_overload" },
+                    { text: "Help me reflect and celebrate growth", type: "majesty", signal: "refinement" }
+                ]
+            },
+            {
+                id: "q8",
+                category: "visibility",
+                question: "When you think about building authority, you feel:",
+                answers: [
+                    { text: "Uncertain where to start", type: "authority", signal: "under_visibility" },
+                    { text: "Overwhelmed by all the options", type: "strategist", signal: "fragmentation" },
+                    { text: "Concerned about sustainability", type: "sovereign", signal: "boundary_strain" },
+                    { text: "Ready to share your journey", type: "majesty", signal: "embodiment" }
+                ]
+            },
+            {
+                id: "q9",
+                category: "recovery",
+                question: "Rest and recovery feel like:",
+                answers: [
+                    { text: "Something I should do but don't prioritize", type: "authority", signal: "self_doubt" },
+                    { text: "Part of an optimized system", type: "strategist", signal: "fragmentation" },
+                    { text: "Non-negotiable for my wellbeing", type: "sovereign", signal: "boundary_strain" },
+                    { text: "An essential part of integration", type: "majesty", signal: "integration" }
+                ]
+            },
+            {
+                id: "q10",
+                category: "identity_orientation",
+                question: "The word that resonates most with you right now is:",
+                answers: [
+                    { text: "Foundation", type: "authority", signal: "hesitation" },
+                    { text: "Strategy", type: "strategist", signal: "unclear_planning" },
+                    { text: "Sovereignty", type: "sovereign", signal: "capacity_overload" },
+                    { text: "Mastery", type: "majesty", signal: "embodiment" }
+                ]
+            },
+            {
+                id: "q11",
+                category: "execution",
+                question: "When you start a new project, you:",
+                answers: [
+                    { text: "Research thoroughly before beginning", type: "authority", signal: "hesitation" },
+                    { text: "Create a detailed plan and timeline", type: "strategist", signal: "fragmentation" },
+                    { text: "Check if it aligns with your energy", type: "sovereign", signal: "boundary_strain" },
+                    { text: "Consider what you'll learn from it", type: "majesty", signal: "refinement" }
+                ]
+            },
+            {
+                id: "q12",
+                category: "authority",
+                question: "Your relationship with imposter syndrome is:",
+                answers: [
+                    { text: "It stops me from taking action", type: "authority", signal: "self_doubt" },
+                    { text: "I rationalize through it but it slows me down", type: "strategist", signal: "unclear_planning" },
+                    { text: "I acknowledge it but don't let it control me", type: "sovereign", signal: "capacity_overload" },
+                    { text: "I've learned to see it as part of growth", type: "majesty", signal: "integration" }
+                ]
+            }
+        ];
+
+        const archetypes = {
+            authority: {
+                name: "The Authority",
+                description: "You lead with clarity and conviction, building foundations that others trust. Your strength is in establishing credibility.",
+                quarters: {
+                    q1: {
+                        name: "Q1",
+                        archetype: "The Authority",
+                        identityStatement: "I am the authority who leads with clarity and conviction. I build foundations that others trust.",
+                        constraint: "Fear of being seen as an imposter",
+                        newBehaviors: ["Share expertise publicly", "Say no to misaligned opportunities", "Lead with confidence"],
+                        visibilityTheme: "Establishing foundational authority"
+                    },
+                    q2: {
+                        name: "Q2",
+                        archetype: "The Strategist",
+                        identityStatement: "I am the architect of scalable authority. I build systems that compound visibility.",
+                        constraint: "Perfectionism that delays publishing",
+                        newBehaviors: ["Ship weekly, refine later", "Voice over polish", "Visibility = generosity"],
+                        visibilityTheme: "Thought leadership through strategic content"
+                    },
+                    q3: {
+                        name: "Q3",
+                        archetype: "The Sovereign",
+                        identityStatement: "I am the sovereign who claims my space unapologetically. I lead from wholeness.",
+                        constraint: "Burnout from overextension",
+                        newBehaviors: ["Rest as power move", "Delegate with trust", "Protect energy boundaries"],
+                        visibilityTheme: "Sustainable leadership presence"
+                    },
+                    q4: {
+                        name: "Q4",
+                        archetype: "The Majesty",
+                        identityStatement: "I am the majesty who embodies mastery. I celebrate growth and evolution.",
+                        constraint: "Dismissing progress and achievements",
+                        newBehaviors: ["Celebrate wins publicly", "Reflect without judgment", "Integrate lessons"],
+                        visibilityTheme: "Reflective authority and integration"
+                    }
+                }
+            },
+            strategist: {
+                name: "The Strategist",
+                description: "You're the architect of scalable systems. Your genius is in creating processes that maximize impact with minimal energy.",
+                quarters: {
+                    q1: {
+                        name: "Q1",
+                        archetype: "The Foundation Builder",
+                        identityStatement: "I build strategic foundations that compound over time.",
+                        constraint: "Analysis paralysis",
+                        newBehaviors: ["Start before perfect", "Document systems", "Build in public"],
+                        visibilityTheme: "Strategic foundation setting"
+                    },
+                    q2: {
+                        name: "Q2",
+                        archetype: "The Strategist",
+                        identityStatement: "I create leverage through intelligent systems and processes.",
+                        constraint: "Perfectionism that delays shipping",
+                        newBehaviors: ["Ship weekly", "Iterate rapidly", "Trust the process"],
+                        visibilityTheme: "Scalable thought leadership"
+                    },
+                    q3: {
+                        name: "Q3",
+                        archetype: "The Optimizer",
+                        identityStatement: "I refine and scale what works, eliminating what doesn't.",
+                        constraint: "Over-optimization",
+                        newBehaviors: ["Good enough ships", "Focus on ROI", "Automate ruthlessly"],
+                        visibilityTheme: "Efficiency and optimization"
+                    },
+                    q4: {
+                        name: "Q4",
+                        archetype: "The Architect",
+                        identityStatement: "I design systems that outlast effort and create lasting impact.",
+                        constraint: "Losing sight of people in systems",
+                        newBehaviors: ["Human-first systems", "Share frameworks", "Mentor others"],
+                        visibilityTheme: "Legacy system building"
+                    }
+                }
+            },
+            sovereign: {
+                name: "The Sovereign",
+                description: "You lead from wholeness, not hustle. Your power is in sustainable leadership that honors your energy and boundaries.",
+                quarters: {
+                    q1: {
+                        name: "Q1",
+                        archetype: "The Grounded Leader",
+                        identityStatement: "I lead from a place of inner stability and clarity.",
+                        constraint: "Saying yes to everything",
+                        newBehaviors: ["Radical boundaries", "Energy audits", "Aligned yes only"],
+                        visibilityTheme: "Grounded leadership"
+                    },
+                    q2: {
+                        name: "Q2",
+                        archetype: "The Balanced Creator",
+                        identityStatement: "I create from overflow, not depletion.",
+                        constraint: "Guilt around rest",
+                        newBehaviors: ["Rest is productive", "Quality over quantity", "Sustainable pace"],
+                        visibilityTheme: "Balanced productivity"
+                    },
+                    q3: {
+                        name: "Q3",
+                        archetype: "The Sovereign",
+                        identityStatement: "I claim my space unapologetically and lead from wholeness.",
+                        constraint: "People-pleasing",
+                        newBehaviors: ["Unapologetic nos", "Self-trust", "Sovereign decisions"],
+                        visibilityTheme: "Authentic sovereignty"
+                    },
+                    q4: {
+                        name: "Q4",
+                        archetype: "The Integrated Whole",
+                        identityStatement: "I embody wholeness and inspire others to do the same.",
+                        constraint: "Fragmentation",
+                        newBehaviors: ["Integration practices", "Whole-self leadership", "Model balance"],
+                        visibilityTheme: "Wholeness and integration"
+                    }
+                }
+            },
+            majesty: {
+                name: "The Majesty",
+                description: "You embody mastery through reflection and integration. Your strength is in celebrating growth and sharing wisdom.",
+                quarters: {
+                    q1: {
+                        name: "Q1",
+                        archetype: "The Learner",
+                        identityStatement: "I embrace every experience as a teacher and opportunity for growth.",
+                        constraint: "Judging my journey",
+                        newBehaviors: ["Document lessons", "Share failures", "Growth mindset"],
+                        visibilityTheme: "Learning in public"
+                    },
+                    q2: {
+                        name: "Q2",
+                        archetype: "The Integrator",
+                        identityStatement: "I weave lessons into wisdom and share generously.",
+                        constraint: "Hoarding knowledge",
+                        newBehaviors: ["Teach everything", "Share insights", "Create frameworks"],
+                        visibilityTheme: "Wisdom sharing"
+                    },
+                    q3: {
+                        name: "Q3",
+                        archetype: "The Celebrator",
+                        identityStatement: "I honor my growth and celebrate every milestone.",
+                        constraint: "Minimizing achievements",
+                        newBehaviors: ["Public wins", "Gratitude practice", "Acknowledge growth"],
+                        visibilityTheme: "Celebration and acknowledgment"
+                    },
+                    q4: {
+                        name: "Q4",
+                        archetype: "The Majesty",
+                        identityStatement: "I embody mastery and inspire transformation through my journey.",
+                        constraint: "Comparison to others",
+                        newBehaviors: ["Own your evolution", "Share your story", "Inspire others"],
+                        visibilityTheme: "Mastery and legacy"
+                    }
+                }
+            }
+        };
+
+        let currentQuestionIndex = 0;
+        let answers = [];
+        let selectedArchetype = null;
+        let customQuarters = null;
+
+        function startQuiz() {
+            showStep('step-quiz');
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const question = quizData[currentQuestionIndex];
+            document.getElementById('current-question').textContent = currentQuestionIndex + 1;
+            document.getElementById('question-number').textContent = `QUESTION ${currentQuestionIndex + 1}`;
+            document.getElementById('question-text').textContent = question.question;
+            
+            const progress = ((currentQuestionIndex + 1) / quizData.length) * 100;
+            document.getElementById('quiz-progress').style.width = progress + '%';
+            
+            const answersContainer = document.getElementById('answers-container');
+            answersContainer.innerHTML = '';
+            
+            question.answers.forEach((answer, index) => {
+                const div = document.createElement('div');
+                div.className = 'answer-option';
+                div.textContent = answer.text;
+                div.onclick = () => selectAnswer(index, answer.type);
+                answersContainer.appendChild(div);
+            });
+            
+            document.getElementById('next-btn').disabled = true;
+        }
+
+        function selectAnswer(index, type) {
+            const options = document.querySelectorAll('.answer-option');
+            options.forEach(opt => opt.classList.remove('selected'));
+            options[index].classList.add('selected');
+            
+            answers[currentQuestionIndex] = type;
+            document.getElementById('next-btn').disabled = false;
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            
+            if (currentQuestionIndex < quizData.length) {
+                loadQuestion();
+            } else {
+                calculateResult();
+            }
+        }
+
+        function calculateResult() {
+            const counts = {};
+            answers.forEach(type => {
+                counts[type] = (counts[type] || 0) + 1;
+            });
+            
+            let maxCount = 0;
+            let result = 'authority';
+            for (const [type, count] of Object.entries(counts)) {
+                if (count > maxCount) {
+                    maxCount = count;
+                    result = type;
+                }
+            }
+            
+            selectedArchetype = result;
+            displayResult();
+        }
+
+        function displayResult() {
+            const archetype = archetypes[selectedArchetype];
+            const resultHeadline = `You are entering: ${archetype.name}`;
+            const resultBody = `Your next leap is about alignment, not force. This app will adjust focus, pacing, and visibility accordingly.`;
+            
+            document.getElementById('result-archetype').textContent = resultHeadline;
+            document.getElementById('result-description').textContent = resultBody;
+            showStep('step-result');
+        }
+
+        function showCustomization() {
+            const archetype = archetypes[selectedArchetype];
+            customQuarters = JSON.parse(JSON.stringify(archetype.quarters));
+            
+            const container = document.getElementById('quarters-customization');
+            container.innerHTML = '';
+            
+            Object.keys(customQuarters).forEach(qKey => {
+                const quarter = customQuarters[qKey];
+                const section = document.createElement('div');
+                section.className = 'customize-section';
+                section.innerHTML = `
+                    <h3>${quarter.name}: ${quarter.archetype}</h3>
+                    <input type="text" class="form-input-large" 
+                           data-quarter="${qKey}" data-field="archetype"
+                           value="${quarter.archetype}" 
+                           placeholder="Archetype name">
+                    <textarea class="form-input-large" 
+                              data-quarter="${qKey}" data-field="identityStatement"
+                              placeholder="Identity statement">${quarter.identityStatement}</textarea>
+                `;
+                container.appendChild(section);
+            });
+            
+            showStep('step-customize');
+        }
+
+        function useDefaults() {
+            const archetype = archetypes[selectedArchetype];
+            customQuarters = archetype.quarters;
+            saveToStorage();
+        }
+
+        function saveCustomization() {
+            const inputs = document.querySelectorAll('[data-quarter]');
+            inputs.forEach(input => {
+                const qKey = input.getAttribute('data-quarter');
+                const field = input.getAttribute('data-field');
+                customQuarters[qKey][field] = input.value;
+            });
+            
+            saveToStorage();
+        }
+
+        function saveToStorage() {
+            const now = new Date();
+            const currentYear = now.getFullYear();
+            const currentMonth = now.getMonth();
+            
+            let currentQuarter;
+            if (currentMonth >= 0 && currentMonth <= 2) currentQuarter = 'q1';
+            else if (currentMonth >= 3 && currentMonth <= 5) currentQuarter = 'q2';
+            else if (currentMonth >= 6 && currentMonth <= 8) currentQuarter = 'q3';
+            else currentQuarter = 'q4';
+            
+            const userData = {
+                year: currentYear,
+                currentQuarter: currentQuarter,
+                selectedArchetype: selectedArchetype,
+                weeks: [],
+                essays: [],
+                visibilityActions: [],
+                cycles: [],
+                activeCycleId: null,
+                quarters: customQuarters,
+                currentEnergy: 3,
+                completedToday: false,
+                todayDate: now.toDateString(),
+                priorityComplete: false,
+                microActionComplete: false,
+                practiceComplete: false,
+                weekScore: 0,
+                weekOutcomes: '',
+                weekReflection: '',
+                sprintProgress: 0,
+                recoveryStreak: 0,
+                dailyPriority: '',
+                dailyAnchor: customQuarters[currentQuarter].identityStatement,
+                visibilityMicroAction: ''
+            };
+            
+            localStorage.setItem('quantumLeapData', JSON.stringify(userData));
+            localStorage.setItem('onboardingComplete', 'true');
+            localStorage.setItem('appVersion', '10.0');
+            
+            window.location.href = 'index.html';
+        }
+
+        function showStep(stepId) {
+            document.querySelectorAll('.quiz-step').forEach(step => {
+                step.classList.remove('active');
+            });
+            document.getElementById(stepId).classList.add('active');
+        }
+    </script>
+</body>
+</html>
