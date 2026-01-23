@@ -35,7 +35,7 @@ Monthly calendar with sparkles ✨ marking completed days. Visual motivation at 
 ## 🚀 Getting Started
 
 ### Live Demo
-Visit: [your-app-url.vercel.app]
+Visit: [[Quantum Leap Productivity](https://productivity-app-rose-one.vercel.app/onboarding.html)
 
 ### Local Development
 
