@@ -164,65 +164,6 @@ Visit: [[Quantum Leap Productivity](https://productivity-app-rose-one.vercel.app
 
 ---
 
-## 🚀 Deployment
-
-### Deploy to Vercel (Recommended)
-
-1. Install Vercel CLI:
-```bash
-npm install -g vercel
-```
-
-2. Login to Vercel:
-```bash
-vercel login
-```
-
-3. Deploy from this directory:
-```bash
-cd "/Users/daniellewashington/Desktop/goose/productivity app public"
-vercel --yes
-```
-
-4. For production:
-```bash
-vercel --prod
-```
-
-### Deploy to Netlify
-
-1. Install Netlify CLI:
-```bash
-npm install -g netlify-cli
-```
-
-2. Login:
-```bash
-netlify login
-```
-
-3. Deploy:
-```bash
-netlify deploy --prod
-```
-
-### Deploy to GitHub Pages
-
-1. Create GitHub repository
-2. Push these files
-3. Settings → Pages → Deploy from main branch
-4. Access at `https://username.github.io/repo-name`
-
----
-
-## 📖 Documentation
-
-- `IMPLEMENTATION.md` - Full technical documentation
-- Architecture, data model, functions, design system
-- Version history and maintenance notes
-
----
-
 ## 🎯 Current Version
 
 **v10.0** - January 22, 2026
@@ -278,7 +219,7 @@ This is a personal project. No official support, but feel free to:
 
 **Created by:** Danielle Washington  
 **Development Partner:** Goose AI  
-**Inspired by:** Atomic Habits, The Gap and The Gain, Human Design
+**Inspired by:** Atomic Habits & Human Design
 
 ---
 
