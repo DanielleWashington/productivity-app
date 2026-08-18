@@ -232,6 +232,38 @@ body {
     margin-bottom: var(--spacing-sm);
 }
 
+.identity-profile-tag,
+.anchor-profile-tag {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.18);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+}
+
+.identity-profile-tag {
+    margin: 0 0 var(--spacing-sm);
+}
+
+.profile-entry-link {
+    display: block;
+    width: 100%;
+    margin: -4px 0 var(--spacing-md);
+    padding: 10px;
+    border: 0;
+    background: transparent;
+    color: var(--primary-color);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.profile-entry-link:hover {
+    text-decoration: underline;
+}
+
 .identity-statement {
     font-family: var(--font-serif);
     font-size: 16px;
@@ -305,6 +337,86 @@ body {
     font-size: 18px;
     line-height: 1.5;
     font-style: italic;
+}
+
+.anchor-profile-tag {
+    margin-top: var(--spacing-sm);
+}
+
+/* ===========================
+   OPTIONAL IDENTITY PROFILE
+   =========================== */
+
+.optional-step-label {
+    display: inline-block;
+    margin-bottom: var(--spacing-sm);
+    padding: 5px 10px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.2);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+}
+
+.optional-profile-card {
+    margin: var(--spacing-md) 0;
+    padding: var(--spacing-md);
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+}
+
+.optional-profile-card label {
+    display: block;
+    margin-bottom: var(--spacing-xs);
+    color: var(--text-primary);
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.profile-select {
+    width: 100%;
+    padding: 14px;
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-md);
+    background: var(--surface);
+    color: var(--text-primary);
+    font: inherit;
+}
+
+.profile-select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(233, 30, 140, 0.1);
+}
+
+.optional-note,
+.energy-disclaimer {
+    margin-top: var(--spacing-xs);
+    color: var(--text-secondary);
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.energy-disclaimer {
+    color: inherit;
+    opacity: 0.85;
+}
+
+.skip-profile-button {
+    width: 100%;
+    margin-top: var(--spacing-sm);
+    padding: 12px;
+    border: 0;
+    background: transparent;
+    color: var(--primary-color);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.skip-profile-button:hover {
+    text-decoration: underline;
 }
 
 .priority-item {

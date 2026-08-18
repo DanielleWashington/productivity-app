@@ -108,6 +108,28 @@ function loadData() {
     return null;
 }
 
+function getOptionalProfileLabel() {
+    if (typeof QuantumLeapProfile === 'undefined') return '';
+
+    return QuantumLeapProfile.formatIdentityTag({
+        energyType: localStorage.getItem('energyType'),
+        sunSign: localStorage.getItem('sunSign')
+    });
+}
+
+function updateOptionalProfileTag(selector) {
+    const tag = document.querySelector(selector);
+    if (!tag) return;
+
+    const label = getOptionalProfileLabel();
+    tag.textContent = label;
+    tag.classList.toggle('hidden', !label);
+}
+
+function openOptionalProfileEditor() {
+    window.location.href = 'onboarding.html?profile=1';
+}
+
 // DOM Elements
 let screenContainer;
 let navItems;
@@ -180,6 +202,8 @@ function updateTodayScreenContent() {
     setTimeout(() => {
         const priorityText = document.getElementById('priority-text');
         const microText = document.getElementById('micro-text');
+        const anchorText = document.querySelector('.anchor-text');
+        const currentQuarter = AppState.data.quarters[AppState.data.currentQuarter];
         
         if (priorityText) {
             priorityText.textContent = AppState.data.dailyPriority || 'Click Edit to set priority';
@@ -190,6 +214,13 @@ function updateTodayScreenContent() {
             microText.textContent = AppState.data.visibilityMicroAction || 'Click Edit to set action';
             microText.style.opacity = AppState.data.visibilityMicroAction ? '1' : '0.5';
         }
+
+        if (anchorText) {
+            const anchor = AppState.data.dailyAnchor || currentQuarter.identityStatement;
+            anchorText.textContent = `“${anchor}”`;
+        }
+
+        updateOptionalProfileTag('.anchor-profile-tag');
     }, 10);
 }
 
@@ -204,6 +235,7 @@ function updateHomeScreen() {
     if (badge) badge.textContent = `${currentQ.name} ${AppState.data.year}`;
     if (archetype) archetype.textContent = currentQ.archetype.toUpperCase();
     if (statement) statement.textContent = currentQ.identityStatement;
+    updateOptionalProfileTag('.identity-profile-tag');
     
     // Update sprint card with actual active sprint
     updateHomeSprintCard();
