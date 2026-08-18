@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Quantum Leap — Discover Your Type</title>
-    <link rel="stylesheet" href="styles.css?v=10">
+    <link rel="stylesheet" href="styles.css?v=15">
     <style>
         .onboarding-container {
             max-width: 600px;
@@ -70,6 +70,7 @@
         }
         
         .answer-option {
+            width: 100%;
             background: white;
             border: 2px solid var(--border-color);
             border-radius: 12px;
@@ -78,6 +79,7 @@
             cursor: pointer;
             transition: all 0.2s ease;
             font-size: 16px;
+            font-family: inherit;
             color: var(--text-primary);
             text-align: left;
         }
@@ -257,7 +259,54 @@
             <button class="btn-large btn-secondary" onclick="showCustomization()">Customize Quarters First</button>
         </div>
 
-        <!-- Step 9: Customization -->
+        <!-- Optional Energy Type + Sun Sign -->
+        <div class="quiz-step" id="step-energy">
+            <div class="welcome-card">
+                <span class="optional-step-label">OPTIONAL · PLAYFUL REFLECTION</span>
+                <h1>Explore Your Energy Type</h1>
+                <p>Five short behavioral questions about how you move, decide, and recharge.</p>
+            </div>
+
+            <div id="energy-quiz-panel">
+                <div class="progress-bar-container">
+                    <p class="progress-label">Energy question <span id="energy-question-number">1</span> of 5</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="energy-progress" style="width: 20%"></div>
+                    </div>
+                </div>
+
+                <div class="question-card">
+                    <div class="question-number">ENERGY STYLE</div>
+                    <h2 class="question-text" id="energy-question-text"></h2>
+                    <div id="energy-answers-container"></div>
+                </div>
+
+                <button class="btn-large btn-primary" id="energy-next-btn" onclick="nextEnergyQuestion()" disabled>Continue</button>
+            </div>
+
+            <div id="energy-result-panel" class="hidden">
+                <div class="result-card energy-result-card">
+                    <div class="result-archetype" id="energy-result-type"></div>
+                    <p class="result-description" id="energy-result-description"></p>
+                    <p class="energy-disclaimer">This is a playful energy-style reflection, not a calculated Human Design chart.</p>
+                </div>
+                <button class="btn-large btn-primary" id="save-profile-btn" onclick="completeOptionalProfile()">Continue</button>
+                <button class="btn-large btn-secondary" onclick="retakeEnergyQuiz()">Retake mini-quiz</button>
+            </div>
+
+            <div class="optional-profile-card">
+                <label for="sun-sign">Your Sun Sign <span style="font-weight: 400; color: var(--text-secondary);">(optional)</span></label>
+                <select class="profile-select" id="sun-sign">
+                    <option value="">Choose one if you already know it</option>
+                </select>
+                <p class="optional-note">No birth date, time, or location needed. You can leave this blank.</p>
+            </div>
+
+            <button class="btn-large btn-secondary" id="sun-only-btn" onclick="completeSunSignOnly()">Continue without Energy Quiz</button>
+            <button class="skip-profile-button" id="skip-profile-btn" onclick="skipOptionalProfile()">Skip this step →</button>
+        </div>
+
+        <!-- Customization -->
         <div class="quiz-step" id="step-customize">
             <div class="welcome-card">
                 <h1>🎨 Personalize Your Quarters</h1>
@@ -270,6 +319,7 @@
         </div>
     </div>
 
+    <script src="profile.js?v=1"></script>
     <script>
         // 12-question quiz with proper categorization
         const quizData = [
@@ -566,6 +616,11 @@
         let answers = [];
         let selectedArchetype = null;
         let customQuarters = null;
+        let energyQuestionIndex = 0;
+        let energyAnswers = [];
+        let selectedEnergyType = null;
+        let energyNextAction = 'customize';
+        const isProfileEditMode = new URLSearchParams(window.location.search).get('profile') === '1';
 
         function startQuiz() {
             showStep('step-quiz');
@@ -643,9 +698,152 @@
             showStep('step-result');
         }
 
-        function showCustomization() {
+        function populateSunSigns() {
+            const select = document.getElementById('sun-sign');
+            if (select.options.length === 1) {
+                QuantumLeapProfile.SUN_SIGNS.forEach(sign => {
+                    const option = document.createElement('option');
+                    option.value = sign;
+                    option.textContent = sign;
+                    select.appendChild(option);
+                });
+            }
+            select.value = localStorage.getItem('sunSign') || '';
+        }
+
+        function showEnergyProfileStep(nextAction) {
+            energyNextAction = nextAction;
+            populateSunSigns();
+            showStep('step-energy');
+
+            const storedEnergyType = localStorage.getItem('energyType');
+            const skipButton = document.getElementById('skip-profile-btn');
+            const saveButton = document.getElementById('save-profile-btn');
+
+            if (isProfileEditMode) {
+                skipButton.textContent = 'Cancel and return to Home';
+                saveButton.textContent = 'Save Profile';
+                document.getElementById('sun-only-btn').textContent = 'Save Sun Sign Only';
+            }
+
+            if (isProfileEditMode && QuantumLeapProfile.ENERGY_TYPES[storedEnergyType]) {
+                renderEnergyResult(storedEnergyType);
+            } else {
+                retakeEnergyQuiz();
+            }
+        }
+
+        function loadEnergyQuestion() {
+            const question = QuantumLeapProfile.ENERGY_QUESTIONS[energyQuestionIndex];
+            document.getElementById('energy-question-number').textContent = energyQuestionIndex + 1;
+            document.getElementById('energy-question-text').textContent = question.question;
+            document.getElementById('energy-progress').style.width = `${((energyQuestionIndex + 1) / QuantumLeapProfile.ENERGY_QUESTIONS.length) * 100}%`;
+
+            const container = document.getElementById('energy-answers-container');
+            container.innerHTML = '';
+            question.answers.forEach((answer, index) => {
+                const option = document.createElement('button');
+                option.type = 'button';
+                option.className = 'answer-option';
+                option.textContent = answer.text;
+                option.setAttribute('aria-pressed', 'false');
+                option.onclick = () => selectEnergyAnswer(index, answer.type);
+                container.appendChild(option);
+            });
+
+            document.getElementById('energy-next-btn').disabled = true;
+            document.getElementById('energy-quiz-panel').classList.remove('hidden');
+            document.getElementById('energy-result-panel').classList.add('hidden');
+            document.getElementById('sun-only-btn').classList.remove('hidden');
+        }
+
+        function selectEnergyAnswer(index, type) {
+            const options = document.querySelectorAll('#energy-answers-container .answer-option');
+            options.forEach(option => {
+                option.classList.remove('selected');
+                option.setAttribute('aria-pressed', 'false');
+            });
+            options[index].classList.add('selected');
+            options[index].setAttribute('aria-pressed', 'true');
+            energyAnswers[energyQuestionIndex] = type;
+            document.getElementById('energy-next-btn').disabled = false;
+        }
+
+        function nextEnergyQuestion() {
+            energyQuestionIndex++;
+
+            if (energyQuestionIndex < QuantumLeapProfile.ENERGY_QUESTIONS.length) {
+                loadEnergyQuestion();
+                return;
+            }
+
+            renderEnergyResult(QuantumLeapProfile.calculateEnergyType(energyAnswers));
+        }
+
+        function renderEnergyResult(type) {
+            selectedEnergyType = type;
+            document.getElementById('energy-result-type').textContent = type;
+            document.getElementById('energy-result-description').textContent = QuantumLeapProfile.getEnergyDescription(type);
+            document.getElementById('energy-quiz-panel').classList.add('hidden');
+            document.getElementById('energy-result-panel').classList.remove('hidden');
+            document.getElementById('sun-only-btn').classList.add('hidden');
+        }
+
+        function retakeEnergyQuiz() {
+            energyQuestionIndex = 0;
+            energyAnswers = [];
+            selectedEnergyType = null;
+            loadEnergyQuestion();
+        }
+
+        function saveSunSignSelection() {
+            const sunSign = document.getElementById('sun-sign').value;
+            if (sunSign) localStorage.setItem('sunSign', sunSign);
+            else localStorage.removeItem('sunSign');
+        }
+
+        function continueAfterOptionalProfile() {
+            if (isProfileEditMode) {
+                window.location.href = 'index.html';
+            } else if (energyNextAction === 'save') {
+                saveToStorage();
+            } else {
+                showCustomization(true);
+            }
+        }
+
+        function completeOptionalProfile() {
+            if (selectedEnergyType) {
+                localStorage.setItem('energyType', selectedEnergyType);
+            }
+            saveSunSignSelection();
+            continueAfterOptionalProfile();
+        }
+
+        function completeSunSignOnly() {
+            if (isProfileEditMode) {
+                localStorage.removeItem('energyType');
+            }
+            saveSunSignSelection();
+            continueAfterOptionalProfile();
+        }
+
+        function skipOptionalProfile() {
+            if (isProfileEditMode) {
+                window.location.href = 'index.html';
+            } else {
+                showCustomization(true);
+            }
+        }
+
+        function showCustomization(skipOptionalProfile = false) {
             const archetype = archetypes[selectedArchetype];
             customQuarters = JSON.parse(JSON.stringify(archetype.quarters));
+
+            if (!skipOptionalProfile) {
+                showEnergyProfileStep('customize');
+                return;
+            }
             
             const container = document.getElementById('quarters-customization');
             container.innerHTML = '';
@@ -672,8 +870,8 @@
 
         function useDefaults() {
             const archetype = archetypes[selectedArchetype];
-            customQuarters = archetype.quarters;
-            saveToStorage();
+            customQuarters = JSON.parse(JSON.stringify(archetype.quarters));
+            showEnergyProfileStep('save');
         }
 
         function saveCustomization() {
@@ -726,7 +924,7 @@
             
             localStorage.setItem('quantumLeapData', JSON.stringify(userData));
             localStorage.setItem('onboardingComplete', 'true');
-            localStorage.setItem('appVersion', '10.0');
+            localStorage.setItem('appVersion', '11.0');
             
             window.location.href = 'index.html';
         }
@@ -736,6 +934,10 @@
                 step.classList.remove('active');
             });
             document.getElementById(stepId).classList.add('active');
+        }
+
+        if (isProfileEditMode) {
+            showEnergyProfileStep('return');
         }
     </script>
 </body>

@@ -18,7 +18,7 @@
     <!-- Splash screen color for iOS -->
     <meta name="msapplication-TileColor" content="#E91E8C">
 
-    <link rel="stylesheet" href="styles.css?v=14">
+    <link rel="stylesheet" href="styles.css?v=15">
 </head>
 <body>
     <!-- Main App Container -->
@@ -59,8 +59,10 @@
                 <div class="identity-card" data-quarter="q2">
                     <div class="identity-badge">Q2 2026</div>
                     <h2 class="identity-archetype">THE STRATEGIST</h2>
+                    <p class="identity-profile-tag hidden"></p>
                     <p class="identity-statement">I am the architect of scalable authority. I build systems that compound visibility without depleting energy.</p>
                 </div>
+                <button class="profile-entry-link" onclick="openOptionalProfileEditor()">✦ Deepen Your Profile</button>
                 <div class="card sprint-card">
                     <h3 class="card-title">CURRENT 12-WEEK SPRINT</h3>
                     <p class="sprint-name">Scale Authority Platform</p>
@@ -90,6 +92,7 @@
                 <div class="card anchor-card">
                     <h3 class="card-title">TODAY'S ANCHOR</h3>
                     <p class="anchor-text" style="font-style: italic; color: var(--primary-color); font-size: 18px; line-height: 1.6; font-weight: 500;">"I move with authority and trust my decisions"</p>
+                    <p class="anchor-profile-tag hidden"></p>
                     <p style="font-size: 13px; color: var(--text-light); margin-top: 12px;">Your identity statement grounds every action today.</p>
                 </div>
                 <div class="card priority-card" style="border: 2px solid var(--primary-color); background: rgba(233, 30, 140, 0.03);">
@@ -229,17 +232,18 @@
     </template>
 
     <script>
+        const CURRENT_APP_VERSION = '11.0';
+        if (localStorage.getItem('appVersion') !== CURRENT_APP_VERSION) {
+            localStorage.setItem('appVersion', CURRENT_APP_VERSION);
+        }
+
         if (!localStorage.getItem('onboardingComplete')) {
             window.location.href = 'onboarding.html';
         }
     </script>
-    <script src="app.js?v=14"></script>
+    <script src="profile.js?v=1"></script>
+    <script src="app.js?v=15"></script>
     <script>
-        if (!localStorage.getItem('appVersion') || localStorage.getItem('appVersion') !== '10.0') {
-            localStorage.clear();
-            localStorage.setItem('appVersion', '10.0');
-            window.location.href = 'onboarding.html';
-        }
 
         // Register service worker
         if ('serviceWorker' in navigator) {

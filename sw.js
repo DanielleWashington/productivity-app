@@ -1,10 +1,12 @@
-const CACHE_NAME = 'quantum-leap-v10';
+const CACHE_NAME = 'quantum-leap-v11';
 const ASSETS = [
   '/',
   '/index.html',
   '/onboarding.html',
-  '/app.js',
-  '/styles.css'
+  '/onboarding.html?profile=1',
+  '/app.js?v=15',
+  '/profile.js?v=1',
+  '/styles.css?v=15'
 ];
 
 self.addEventListener('install', (e) => {
